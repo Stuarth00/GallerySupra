@@ -73,44 +73,31 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
 
   //Searching photos
   const searchPhotos = async (query: string) => {
-    const baseURL = "https://api.unsplash.com/search/photos?query=${query}";
-    const params = new URLSearchParams({
-      query: query,
-      per_page: "50",
-      orientation: "landscape",
-    });
-
     try {
-      const url = `${baseURL}?${params.toString()}`;
-
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
-        },
+      const params = new URLSearchParams({
+        query: query,
+        per_page: "50",
+        orientation: "landscape",
       });
 
+      const response = await fetch(
+        `https://api.unsplash.com/search/photos?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
+          },
+        },
+      );
+
       if (!response.ok) {
-        const data = await response.json();
-        return data.results;
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      const data = await response.json();
+      setPhotos(data.results);
     } catch (error) {
       console.error("Error searching photos:", error);
-      return [];
     }
   };
-
-  // const handleSearch = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   const form = e.target as HTMLFormElement;
-  //   const input = form.querySelector("input");
-  //   const searchTerm = input?.value || "";
-
-  //   if (searchTerm.trim() === "") return;
-
-  //   searchPhotos(searchTerm).then((results) => {
-  //     setPhotos(results);
-  //   });
-  // };
 
   return (
     <PhotoContext.Provider
