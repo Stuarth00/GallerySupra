@@ -23,6 +23,8 @@ function Navigation() {
         <div className="col-span-2 flex items-center flex justify-between border rounded px-3 py-2">
           <input
             type="text"
+            name="searchTerm"
+            id="searching"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search what you want"
@@ -42,6 +44,12 @@ function Navigation() {
           )}
         </div>
       </nav>
+      <div className="flex flex-row gap-4 mt-4 align-items-center justify-center">
+        <button className="flex border text-black">Nature</button>
+        <button className="flex border text-black">Art</button>
+        <button className="flex border text-black">Travel</button>
+        <button className="flex border text-black">Technology</button>
+      </div>
     </div>
   );
 }

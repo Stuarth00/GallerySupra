@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { MOCK_PHOTOS } from "../MockPhotos/Mocks";
 
@@ -28,7 +28,7 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const USE_MOCK_DATA = true;
+  const USE_MOCK_DATA = false;
 
   //Fetching photos from Unsplash API
   useEffect(() => {
@@ -42,11 +42,14 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
       try {
-        const response = await fetch("https://api.unsplash.com/photos", {
-          headers: {
-            Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
+        const response = await fetch(
+          "https://api.unsplash.com/photos?per_page=30",
+          {
+            headers: {
+              Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
+            },
           },
-        });
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -76,12 +79,12 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
     try {
       const params = new URLSearchParams({
         query: query,
-        per_page: "50",
+        page: "7",
         orientation: "landscape",
       });
 
       const response = await fetch(
-        `https://api.unsplash.com/search/photos?${params.toString()}`,
+        `https://api.unsplash.com/search/photos?per_page=30&${params.toString()}`,
         {
           headers: {
             Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
