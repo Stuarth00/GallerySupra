@@ -4,7 +4,7 @@ import { PhotoContext } from "../PhotoContext/PhotoProvider";
 
 function Navigation() {
   const { photos, searchPhotos } = useContext(PhotoContext);
-  const heroPhoto = photos[0];
+  const heroPhoto = photos.length > 0 ? photos[0] : null;
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearchClick = () => {
@@ -45,10 +45,30 @@ function Navigation() {
         </div>
       </nav>
       <div className="flex flex-row gap-4 mt-4 align-items-center justify-center">
-        <button className="flex border text-black">Nature</button>
-        <button className="flex border text-black">Art</button>
-        <button className="flex border text-black">Travel</button>
-        <button className="flex border text-black">Technology</button>
+        <button
+          onClick={() => searchPhotos("nature")}
+          className="flex border text-black"
+        >
+          Nature
+        </button>
+        <button
+          onClick={() => searchPhotos("art")}
+          className="flex border text-black"
+        >
+          Art
+        </button>
+        <button
+          onClick={() => searchPhotos("travel")}
+          className="flex border text-black"
+        >
+          Travel
+        </button>
+        <button
+          onClick={() => searchPhotos("technology")}
+          className="flex border text-black"
+        >
+          Technology
+        </button>
       </div>
     </div>
   );

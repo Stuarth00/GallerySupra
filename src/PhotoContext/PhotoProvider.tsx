@@ -18,6 +18,9 @@ interface PhotoContextType {
   addPhoto: (photo: Photo) => void;
   removePhoto: (id: string) => void;
   searchPhotos: (query: string) => Promise<void>;
+  loadMore: () => Promise<void>;
+  loading: boolean;
+  error: string | null;
 }
 
 export const PhotoContext = createContext<PhotoContextType>(
@@ -28,41 +31,54 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const USE_MOCK_DATA = false;
+  const USE_MOCK_DATA = true;
+  //For pagination
+  const [page, setPage] = useState<number>(1);
+  const [currentQuery, setCurrentQuery] = useState<string | null>(null);
 
   //Fetching photos from Unsplash API
-  useEffect(() => {
-    const fetchPhotos = async () => {
-      setLoading(true);
+  const fetchPhotos = async (query?: string, pageToLoad = 1) => {
+    const params = new URLSearchParams({
+      page: pageToLoad.toString(),
+      per_page: "30",
+      ...(query && { query }),
+    });
 
-      if (USE_MOCK_DATA) {
-        console.log("Using mock data");
-        setPhotos(MOCK_PHOTOS);
-        setLoading(false);
-        return;
+    const url = query
+      ? `https://api.unsplash.com/search/photos?${params.toString()}`
+      : `https://api.unsplash.com/photos?${params.toString()}`;
+    setLoading(true);
+
+    if (USE_MOCK_DATA) {
+      console.log("Using mock data");
+      setPhotos(MOCK_PHOTOS);
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      try {
-        const response = await fetch(
-          "https://api.unsplash.com/photos?per_page=30",
-          {
-            headers: {
-              Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
-            },
-          },
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: Photo[] = await response.json();
-        setPhotos(data);
-      } catch (error) {
-        setError(
-          error instanceof Error ? error.message : "An unkown erro occurred",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
+      const data = await response.json();
+      const newPhotos = query ? data.results : data;
+      setPhotos((prev) =>
+        pageToLoad === 1 ? newPhotos : [...prev, ...newPhotos],
+      );
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "An unkown erro occurred",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+  //Fetches photos on initial load
+  useEffect(() => {
     fetchPhotos();
   }, []);
 
@@ -76,39 +92,30 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
 
   //Searching photos
   const searchPhotos = async (query: string) => {
-    try {
-      const params = new URLSearchParams({
-        query: query,
-        page: "7",
-        orientation: "landscape",
-      });
+    setCurrentQuery(query);
+    setPage(1);
+    await fetchPhotos(query, 1);
+  };
 
-      const response = await fetch(
-        `https://api.unsplash.com/search/photos?per_page=30&${params.toString()}`,
-        {
-          headers: {
-            Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
-          },
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setPhotos(data.results);
-    } catch (error) {
-      console.error("Error searching photos:", error);
-    }
+  const loadMore = async () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    await fetchPhotos(currentQuery ?? undefined, nextPage);
   };
 
   return (
     <PhotoContext.Provider
-      value={{ photos, addPhoto, removePhoto, searchPhotos }}
+      value={{
+        photos,
+        addPhoto,
+        removePhoto,
+        searchPhotos,
+        loadMore,
+        loading,
+        error,
+      }}
     >
-      {loading && <div>Loading photos...</div>}
-      {error && <div>Error loading photos: {error}</div>}
-      {!loading && !error && children}
+      {children}
     </PhotoContext.Provider>
   );
 };
