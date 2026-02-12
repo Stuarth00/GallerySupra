@@ -19,6 +19,10 @@ interface PhotoContextType {
   removePhoto: (id: string) => void;
   searchPhotos: (query: string) => Promise<void>;
   loadMore: () => Promise<void>;
+  handleClick: (photo: Photo) => void;
+  selectedPhoto: Photo | null;
+  handleCloseModal: () => void;
+  isOpen: boolean;
   loading: boolean;
   error: string | null;
 }
@@ -31,10 +35,25 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const USE_MOCK_DATA = true;
+  const USE_MOCK_DATA = false;
   //For pagination
   const [page, setPage] = useState<number>(1);
   const [currentQuery, setCurrentQuery] = useState<string | null>(null);
+
+  //Modal and image clicked
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+
+  //Handle the clik to open modal
+  const handleClick = (photo: Photo) => {
+    setSelectedPhoto(photo);
+    setIsModalOpen(true);
+  };
+  //Handle click to close Modal
+  const handleCloseModal = () => {
+    setSelectedPhoto(null);
+    setIsModalOpen(false);
+  };
 
   //Fetching photos from Unsplash API
   const fetchPhotos = async (query?: string, pageToLoad = 1) => {
@@ -113,6 +132,10 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
         loadMore,
         loading,
         error,
+        handleClick,
+        isOpen: isModalOpen,
+        selectedPhoto,
+        handleCloseModal,
       }}
     >
       {children}

@@ -2,27 +2,23 @@ import { useContext } from "react";
 import { PhotoContext } from "../PhotoContext/PhotoProvider";
 
 function PhotoCard() {
-  const { photos, loadMore, loading } = useContext(PhotoContext);
+  const { photos, loadMore, loading, handleClick } = useContext(PhotoContext);
 
   return (
     <div className="border border-gray-400 rounded p-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
         {photos.map((photo) => (
           <div
             key={photo.id}
-            className="border border-gray-300 rounded overflow-hidden shadow-lg"
+            className="border border-gray-300 rounded overflow-hidden shadow-lg break-inside-avoid"
           >
             <img
               src={photo.urls.small}
               alt={photo.alt_description || "Photo"}
-              className="w-full h-48 object-cover"
+              className="w-full h-auto rounded-t hoverImg"
+              onClick={() => handleClick(photo)}
+              style={{ cursor: "pointer" }}
             />
-            <div className="p-4">
-              <h2 className="text-lg font-semibold mb-2">
-                {photo.alt_description || "Untitled"}
-              </h2>
-              <p className="text-sm text-gray-600">By {photo.user.name}</p>
-            </div>
           </div>
         ))}
         {loading && (

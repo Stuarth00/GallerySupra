@@ -5,6 +5,8 @@ import Navigation from "./Navigation-Bar/Navigation";
 import PhotoCard from "./Main-Content/PhotoCard";
 import { PhotoProvider } from "./PhotoContext/PhotoProvider";
 import "./App.css";
+import ModalPhoto from "./Main-Content/ModalPhoto";
+import PictureDesc from "./Main-Content/PictureDesc";
 
 function App() {
   return (
@@ -16,6 +18,9 @@ function App() {
           <Navigation />
           <Layout>
             <PhotoCard />
+            <ModalPhoto>
+              <PictureDesc />
+            </ModalPhoto>
           </Layout>
         </PhotoProvider>
       </main>
