@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import type { ReactNode } from "react";
 import { MOCK_PHOTOS } from "../MockPhotos/Mocks";
 
@@ -7,6 +8,8 @@ interface Photo {
   urls: {
     regular: string;
     small: string;
+    full: string;
+    raw: string;
   };
   alt_description: string;
   user: {
@@ -25,6 +28,8 @@ interface PhotoContextType {
   isOpen: boolean;
   loading: boolean;
   error: string | null;
+  downloadPhoto: (photo: Photo) => void;
+  handleSharePhoto: (photo: Photo) => void;
 }
 
 export const PhotoContext = createContext<PhotoContextType>(
@@ -32,6 +37,10 @@ export const PhotoContext = createContext<PhotoContextType>(
 );
 
 export const PhotoProvider = ({ children }: { children: ReactNode }) => {
+  //Router
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,20 +48,18 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   //For pagination
   const [page, setPage] = useState<number>(1);
   const [currentQuery, setCurrentQuery] = useState<string | null>(null);
-
-  //Modal and image clicked
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+  const searchParams = new URLSearchParams(location.search);
+  const photoIdFromUrl = searchParams.get("photoId");
+  const selectedPhoto = photos.find((p) => p.id === photoIdFromUrl) || null;
+  const isOpen = !!selectedPhoto;
 
   //Handle the clik to open modal
   const handleClick = (photo: Photo) => {
-    setSelectedPhoto(photo);
-    setIsModalOpen(true);
+    navigate(`/?photoId=${photo.id}`);
   };
   //Handle click to close Modal
   const handleCloseModal = () => {
-    setSelectedPhoto(null);
-    setIsModalOpen(false);
+    navigate("/");
   };
 
   //Fetching photos from Unsplash API
@@ -85,9 +92,13 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
       }
       const data = await response.json();
       const newPhotos = query ? data.results : data;
-      setPhotos((prev) =>
-        pageToLoad === 1 ? newPhotos : [...prev, ...newPhotos],
-      );
+      setPhotos((prev) => {
+        if (pageToLoad === 1) return newPhotos;
+        const uniqueNewPhotos = newPhotos.filter(
+          (newP: Photo) => !prev.some((existingP) => existingP.id === newP.id),
+        );
+        return [...prev, ...uniqueNewPhotos];
+      });
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "An unkown erro occurred",
@@ -117,9 +128,58 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const loadMore = async () => {
+    if (loading) return;
     const nextPage = page + 1;
     setPage(nextPage);
     await fetchPhotos(currentQuery ?? undefined, nextPage);
+  };
+
+  //Download photo
+  const downloadPhoto = async (photo: Photo) => {
+    try {
+      const response = await fetch(photo.urls.raw, {
+        method: "GET",
+        headers: {
+          Authorization: `Client-ID ${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to download photo: ${response.status}`);
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${photo.id}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error downloading photo:", error);
+    }
+  };
+
+  const handleSharePhoto = async () => {
+    if (!selectedPhoto) return;
+
+    const shareUrl = `${window.location.origin}/?photoId=${selectedPhoto.id}`;
+    const shareData = {
+      title: "Check out this photo!",
+      text: `Look at this amazing photo by ${selectedPhoto.user.name}`,
+      url: shareUrl,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        console.log("Shared successfully");
+      } catch (error) {
+        console.log("Error sharing:", error);
+      }
+    } else {
+      navigator.clipboard.writeText(shareUrl);
+      alert("Link copied to clipboard");
+    }
   };
 
   return (
@@ -133,9 +193,12 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
         loading,
         error,
         handleClick,
-        isOpen: isModalOpen,
+        // isOpen: isModalOpen,
         selectedPhoto,
         handleCloseModal,
+        downloadPhoto,
+        handleSharePhoto,
+        isOpen,
       }}
     >
       {children}

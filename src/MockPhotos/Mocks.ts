@@ -4,7 +4,9 @@ export const MOCK_PHOTOS = [
         id: "1",
         urls: {
             regular: "https://images.unsplash.com/photo-1-regular",
-            small: "https://images.unsplash.com/photo-1-small"
+            small: "https://images.unsplash.com/photo-1-small",
+            full: "https://images.unpslash.com/photo-1-full",
+            raw: "https://images.unsplash.com/photo-1-raw"
         },
         alt_description: "A beautiful sunrise",
         user: {
@@ -15,7 +17,9 @@ export const MOCK_PHOTOS = [
         id: "2",
         urls: {
             regular: "https://images.unsplash.com/photo-2-regular",
-            small: "https://images.unsplash.com/photo-2-small"
+            small: "https://images.unsplash.com/photo-2-small",
+            full: "https://images.unpslash.com/photo-1-full",
+            raw: "https://images.unsplash.com/photo-1-raw"
         },
         alt_description: "Mountain landscape",
         user: {
