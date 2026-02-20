@@ -2,6 +2,7 @@ import { createContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import type { ReactNode } from "react";
 import { MOCK_PHOTOS } from "../MockPhotos/Mocks";
+import { Folder } from "../Folder/folderInterface";
 
 interface Photo {
   id: string;
@@ -26,10 +27,18 @@ interface PhotoContextType {
   selectedPhoto: Photo | null;
   handleCloseModal: () => void;
   isOpen: boolean;
+  isSavePanelOpen: boolean;
+  setIsSavePanelOpen: (isOpen: boolean) => void;
   loading: boolean;
   error: string | null;
   downloadPhoto: (photo: Photo) => void;
   handleSharePhoto: (photo: Photo) => void;
+  folders: Folder[];
+  createFolder: (name: string) => void;
+  saveToFolder: (folrderId: string, photoId: string) => void;
+  handleOpenSaveModal: () => void;
+  handleHomeClick: () => void;
+  hanldeNavigateToFolders: () => void;
 }
 
 export const PhotoContext = createContext<PhotoContextType>(
@@ -53,6 +62,48 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   const selectedPhoto = photos.find((p) => p.id === photoIdFromUrl) || null;
   const isOpen = !!selectedPhoto;
 
+  //Saving photos by folders
+  // const [isSavePanelOpen, setIsSavePanelOpen] = useState(false);
+  const [folders, setFolders] = useState<Folder[]>([]);
+  const [isSavePanelOpen, setIsSavePanelOpen] = useState(false);
+
+  const handleHomeClick = () => {
+    navigate("/");
+  };
+  const hanldeNavigateToFolders = () => {
+    navigate("/folders");
+  };
+
+  const handleOpenSaveModal = () => {
+    setIsSavePanelOpen(true);
+    console.log(isSavePanelOpen);
+  };
+
+  const createFolder = (name: string) => {
+    const newFolder: Folder = {
+      id: crypto.randomUUID(),
+      name,
+      photoIds: [],
+    };
+    setFolders((prev) => [...prev, newFolder]);
+  };
+
+  const saveToFolder = (folderId: string, photoId: string) => {
+    setFolders((prev) =>
+      prev.map((folder) =>
+        folder.id === folderId
+          ? {
+              ...folder,
+              photoIds: folder.photoIds.includes(photoId)
+                ? folder.photoIds
+                : [...folder.photoIds, photoId],
+            }
+          : folder,
+      ),
+    );
+    setIsSavePanelOpen(false);
+  };
+
   //Handle the clik to open modal
   const handleClick = (photo: Photo) => {
     navigate(`/?photoId=${photo.id}`);
@@ -60,6 +111,7 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   //Handle click to close Modal
   const handleCloseModal = () => {
     navigate("/");
+    setIsSavePanelOpen(false);
   };
 
   //Fetching photos from Unsplash API
@@ -185,6 +237,7 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   return (
     <PhotoContext.Provider
       value={{
+        handleHomeClick,
         photos,
         addPhoto,
         removePhoto,
@@ -193,12 +246,18 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
         loading,
         error,
         handleClick,
-        // isOpen: isModalOpen,
         selectedPhoto,
         handleCloseModal,
         downloadPhoto,
         handleSharePhoto,
         isOpen,
+        isSavePanelOpen,
+        setIsSavePanelOpen,
+        folders,
+        createFolder,
+        saveToFolder,
+        handleOpenSaveModal,
+        hanldeNavigateToFolders,
       }}
     >
       {children}

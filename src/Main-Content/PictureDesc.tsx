@@ -2,8 +2,13 @@ import { useContext } from "react";
 import { PhotoContext } from "../PhotoContext/PhotoProvider";
 
 function PictureDesc() {
-  const { selectedPhoto, downloadPhoto, handleSharePhoto, handleCloseModal } =
-    useContext(PhotoContext);
+  const {
+    selectedPhoto,
+    downloadPhoto,
+    handleSharePhoto,
+    handleCloseModal,
+    handleOpenSaveModal,
+  } = useContext(PhotoContext);
   return (
     <div className="border border-gray-700 rounded-xl p-4 pb-8 flex flex-col items-center gap-4">
       <img
@@ -26,7 +31,10 @@ function PictureDesc() {
         >
           Share
         </button>
-        <button className="border border-gray-400 rounded px-4 py-2">
+        <button
+          onClick={handleOpenSaveModal}
+          className="border border-gray-400 rounded px-4 py-2"
+        >
           Save
         </button>
       </div>
