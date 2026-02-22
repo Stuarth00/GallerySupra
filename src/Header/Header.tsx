@@ -4,7 +4,7 @@ import { PhotoContext } from "../PhotoContext/PhotoProvider";
 function Header() {
   const { handleHomeClick, hanldeNavigateToFolders } = useContext(PhotoContext);
   return (
-    <div className="static mb-24 grid grid-flow-col grid-cols-2">
+    <div className="relative mb-24 grid grid-flow-col grid-cols-2 pt-20">
       <div className="fixed w-full justify-between font-bold text-2xl text-center bg-[#0E2931] text-[#E2E2E0] py-4 px-8 shadow-md">
         <button onClick={handleHomeClick}>Gallery Supra</button>
       </div>

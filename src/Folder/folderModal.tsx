@@ -10,6 +10,7 @@ function FolderModal() {
     saveToFolder,
     setIsSavePanelOpen,
     selectedPhoto,
+    errorMessage,
   } = useContext(PhotoContext);
   const [newFolderName, setNewFolderName] = useState("");
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -53,6 +54,7 @@ function FolderModal() {
       </div>
       <div className="flex gap-2 mt-4 border-t pt-4">
         <input
+          required
           value={newFolderName}
           onChange={(e) => setNewFolderName(e.target.value)}
           placeholder="New Folder Name"
@@ -64,7 +66,17 @@ function FolderModal() {
         >
           +
         </button>
+        <button
+          onClick={
+            isSavePanelOpen ? () => setIsSavePanelOpen(false) : undefined
+          }
+          className="absolute top-4 left-0 size-10"
+        >
+          {" "}
+          X{" "}
+        </button>
       </div>
+      {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
     </dialog>
   );
 }

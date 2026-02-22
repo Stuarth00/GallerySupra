@@ -39,6 +39,7 @@ interface PhotoContextType {
   handleOpenSaveModal: () => void;
   handleHomeClick: () => void;
   hanldeNavigateToFolders: () => void;
+  errorMessage: string | null;
 }
 
 export const PhotoContext = createContext<PhotoContextType>(
@@ -66,6 +67,7 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   // const [isSavePanelOpen, setIsSavePanelOpen] = useState(false);
   const [folders, setFolders] = useState<Folder[]>([]);
   const [isSavePanelOpen, setIsSavePanelOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleHomeClick = () => {
     navigate("/");
@@ -80,23 +82,38 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const createFolder = (name: string) => {
+    setErrorMessage("");
+    if (name.trim() === "") {
+      setErrorMessage("Folder name cannot be empty");
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+      return;
+    }
     const newFolder: Folder = {
       id: crypto.randomUUID(),
       name,
-      photoIds: [],
+      photos: [],
     };
     setFolders((prev) => [...prev, newFolder]);
   };
 
   const saveToFolder = (folderId: string, photoId: string) => {
+    const photo = photos.find((p) => p.id === photoId);
     setFolders((prev) =>
       prev.map((folder) =>
         folder.id === folderId
           ? {
               ...folder,
-              photoIds: folder.photoIds.includes(photoId)
-                ? folder.photoIds
-                : [...folder.photoIds, photoId],
+              photos: folder.photos.some((p) => p.id === photoId)
+                ? folder.photos
+                : [
+                    ...folder.photos,
+                    {
+                      id: photoId,
+                      previewUrl: photo?.urls.small || "",
+                    },
+                  ],
             }
           : folder,
       ),
@@ -258,6 +275,7 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
         saveToFolder,
         handleOpenSaveModal,
         hanldeNavigateToFolders,
+        errorMessage,
       }}
     >
       {children}
