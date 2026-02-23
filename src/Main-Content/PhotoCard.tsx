@@ -1,8 +1,14 @@
 import { useContext } from "react";
 import { PhotoContext } from "../PhotoContext/PhotoProvider";
 import "./style.css";
-function PhotoCard() {
-  const { photos, loadMore, loading, handleClick } = useContext(PhotoContext);
+import { Photo } from "../PhotoContext/PhotoProvider";
+
+interface PhotoCardProps {
+  photos: Photo[];
+}
+
+function PhotoCard({ photos }: PhotoCardProps) {
+  const { loadMore, loading, handleClick } = useContext(PhotoContext);
 
   const distributePhotos = (items: typeof photos, numCols: number) => {
     const cols = Array.from({ length: numCols }, () => [] as typeof photos);
@@ -32,14 +38,14 @@ function PhotoCard() {
                 />
               </div>
             ))}
-            {loading && (
-              <div className="col-span-full text-center text-gray-500">
-                Loading photos...
-              </div>
-            )}
           </div>
         ))}
       </div>
+      {loading && (
+        <div className="col-span-full text-center text-gray-500">
+          Loading photos...
+        </div>
+      )}
       <button
         onClick={loadMore}
         className="flex border text-black mt-4 mx-auto block"

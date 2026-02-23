@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { MOCK_PHOTOS } from "../MockPhotos/Mocks";
 import { Folder } from "../Folder/folderInterface";
 
-interface Photo {
+export interface Photo {
   id: string;
   urls: {
     regular: string;
@@ -39,6 +39,7 @@ interface PhotoContextType {
   handleOpenSaveModal: () => void;
   handleHomeClick: () => void;
   hanldeNavigateToFolders: () => void;
+  handleNavigateToFolderId: (folderId: string) => void;
   errorMessage: string | null;
 }
 
@@ -76,13 +77,15 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
     navigate("/folders");
   };
 
+  const handleNavigateToFolderId = (folderId: string) => {
+    navigate(`/folders/${folderId}`);
+  };
+
   const handleOpenSaveModal = () => {
     setIsSavePanelOpen(true);
-    console.log(isSavePanelOpen);
   };
 
   const createFolder = (name: string) => {
-    setErrorMessage("");
     if (name.trim() === "") {
       setErrorMessage("Folder name cannot be empty");
       setTimeout(() => {
@@ -112,6 +115,16 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
                     {
                       id: photoId,
                       previewUrl: photo?.urls.small || "",
+                      urls: {
+                        regular: photo?.urls.regular || "",
+                        small: photo?.urls.small || "",
+                        full: photo?.urls.full || "",
+                        raw: photo?.urls.raw || "",
+                      },
+                      alt_description: photo?.alt_description || "",
+                      user: {
+                        name: photo?.user.name || "Unknown",
+                      },
                     },
                   ],
             }
@@ -123,11 +136,19 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
 
   //Handle the clik to open modal
   const handleClick = (photo: Photo) => {
-    navigate(`/?photoId=${photo.id}`);
+    navigate({
+      pathname: location.pathname,
+      search: `?photoId=${photo.id}`,
+    });
+    // navigate(`${location.pathname}?photoId=${photo.id}`);
   };
   //Handle click to close Modal
   const handleCloseModal = () => {
-    navigate("/");
+    navigate({
+      pathname: location.pathname,
+      search: "",
+    });
+    // navigate("/");
     setIsSavePanelOpen(false);
   };
 
@@ -275,6 +296,7 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
         saveToFolder,
         handleOpenSaveModal,
         hanldeNavigateToFolders,
+        handleNavigateToFolderId,
         errorMessage,
       }}
     >

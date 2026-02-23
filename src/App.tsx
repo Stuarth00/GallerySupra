@@ -11,6 +11,7 @@ import "./App.css";
 // import FolderModal from "./Folder/folderModal";
 import { Routes, Route } from "react-router-dom";
 import FolderPage from "./Folder/FolderPage";
+import FolderNavigation from "./FolderNavigation/FolderNavigation";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Gallery />} />
               <Route path="/folders" element={<FolderPage />} />
+              <Route path="/folders/:id" element={<FolderNavigation />} />
             </Routes>
           </Layout>
         </main>

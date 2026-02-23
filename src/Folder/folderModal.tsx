@@ -15,6 +15,11 @@ function FolderModal() {
   const [newFolderName, setNewFolderName] = useState("");
   const dialogRef = useRef<HTMLDialogElement>(null);
 
+  const sendNewFolderName = (name: string) => {
+    createFolder(name);
+    setNewFolderName("");
+  };
+
   useEffect(() => {
     if (!dialogRef.current) return;
     const scrollbarWidth =
@@ -61,7 +66,7 @@ function FolderModal() {
           className="border p-1 flex-1"
         />
         <button
-          onClick={() => createFolder(newFolderName)}
+          onClick={() => sendNewFolderName(newFolderName)}
           className="bg-black text-white px-3 rounded"
         >
           +

@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { PhotoContext } from "../PhotoContext/PhotoProvider";
 
 function FolderPage() {
-  const { folders } = useContext(PhotoContext);
+  const { folders, handleNavigateToFolderId } = useContext(PhotoContext);
 
   return (
     <div className="min-h-screen flex flex-col gap-4 p-4 overflow-hidden">
@@ -23,7 +23,10 @@ function FolderPage() {
                   key={folder.id}
                   className="w-full h-52 bg-gray-900 border border-gray-700 rounded-lg p-4 flex flex-col justify-between hover:shadow-xl hover:border-gray-500 transition"
                 >
-                  <button className="text-white w-full h-40 border border-gray-400 rounded-lg p-4 text-left flex flex-col justify-between hover:shadow-lg transition">
+                  <button
+                    onClick={() => handleNavigateToFolderId(folder.id)}
+                    className="text-white w-full h-40 border border-gray-400 rounded-lg p-4 text-left flex flex-col justify-between hover:shadow-lg transition"
+                  >
                     {previewPhoto ? (
                       <img
                         src={previewPhoto.previewUrl}
