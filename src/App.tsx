@@ -2,16 +2,12 @@ import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
 import Layout from "./Main-Content/Layout";
 import Gallery from "./Gallery/Gallery";
-// import Navigation from "./Navigation-Bar/Navigation";
-// import PhotoCard from "./Main-Content/PhotoCard";
 import { PhotoProvider } from "./PhotoContext/PhotoProvider";
 import "./App.css";
-// import ModalPhoto from "./Main-Content/ModalPhoto";
-// import PictureDesc from "./Main-Content/PictureDesc";
-// import FolderModal from "./Folder/folderModal";
 import { Routes, Route } from "react-router-dom";
 import FolderPage from "./Folder/FolderPage";
 import FolderNavigation from "./FolderNavigation/FolderNavigation";
+import MyPhoto from "./MyPhotos/MyPhoto";
 
 function App() {
   return (
@@ -24,6 +20,7 @@ function App() {
               <Route path="/" element={<Gallery />} />
               <Route path="/folders" element={<FolderPage />} />
               <Route path="/folders/:id" element={<FolderNavigation />} />
+              <Route path="/my-photos" element={<MyPhoto />} />
             </Routes>
           </Layout>
         </main>

@@ -40,6 +40,10 @@ interface PhotoContextType {
   handleHomeClick: () => void;
   hanldeNavigateToFolders: () => void;
   handleNavigateToFolderId: (folderId: string) => void;
+  handleMyPhotosClick: () => void;
+  isFormOpen: boolean;
+  onCloseForm: () => void;
+  onOpenForm: () => void;
   errorMessage: string | null;
 }
 
@@ -70,7 +74,19 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   const [isSavePanelOpen, setIsSavePanelOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleHomeClick = () => {
+  //to open Form modal
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const onCloseForm = () => {
+    setIsFormOpen(false);
+  };
+  const onOpenForm = () => {
+    setIsFormOpen(true);
+  };
+
+  const handleHomeClick = async () => {
+    setCurrentQuery(null);
+    setPage(1);
+    await fetchPhotos(undefined, 1);
     navigate("/");
   };
   const hanldeNavigateToFolders = () => {
@@ -79,6 +95,10 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
 
   const handleNavigateToFolderId = (folderId: string) => {
     navigate(`/folders/${folderId}`);
+  };
+
+  const handleMyPhotosClick = () => {
+    navigate("/my-photos");
   };
 
   const handleOpenSaveModal = () => {
@@ -297,6 +317,10 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
         handleOpenSaveModal,
         hanldeNavigateToFolders,
         handleNavigateToFolderId,
+        handleMyPhotosClick,
+        isFormOpen,
+        onCloseForm,
+        onOpenForm,
         errorMessage,
       }}
     >

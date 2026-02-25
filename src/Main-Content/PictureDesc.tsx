@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import { useParams } from "react-router-dom";
 import { PhotoContext } from "../PhotoContext/PhotoProvider";
 
 function PictureDesc() {
@@ -8,7 +9,15 @@ function PictureDesc() {
     handleSharePhoto,
     handleCloseModal,
     handleOpenSaveModal,
+    folders,
   } = useContext(PhotoContext);
+
+  const { id } = useParams();
+  const currentFolder = folders.find((f) => f.id === id);
+  const isAlreadySaved = currentFolder?.photos.some(
+    (p) => p.id === selectedPhoto?.id,
+  );
+
   return (
     <div className="border border-gray-700 rounded-xl p-4 pb-8 flex flex-col items-center gap-4">
       <img
@@ -31,12 +40,14 @@ function PictureDesc() {
         >
           Share
         </button>
-        <button
-          onClick={handleOpenSaveModal}
-          className="border border-gray-400 rounded px-4 py-2"
-        >
-          Save
-        </button>
+        {isAlreadySaved ? null : (
+          <button
+            onClick={handleOpenSaveModal}
+            className="border border-gray-400 rounded px-4 py-2"
+          >
+            Save
+          </button>
+        )}
       </div>
       <button
         onClick={handleCloseModal}

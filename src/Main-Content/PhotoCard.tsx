@@ -1,13 +1,15 @@
 import { useContext } from "react";
+// import { useParams } from "react-router-dom";
 import { PhotoContext } from "../PhotoContext/PhotoProvider";
 import "./style.css";
 import { Photo } from "../PhotoContext/PhotoProvider";
 
 interface PhotoCardProps {
   photos: Photo[];
+  hideLoadMore?: boolean;
 }
 
-function PhotoCard({ photos }: PhotoCardProps) {
+function PhotoCard({ photos, hideLoadMore }: PhotoCardProps) {
   const { loadMore, loading, handleClick } = useContext(PhotoContext);
 
   const distributePhotos = (items: typeof photos, numCols: number) => {
@@ -18,6 +20,8 @@ function PhotoCard({ photos }: PhotoCardProps) {
     return cols;
   };
   const columns = distributePhotos(photos, 4);
+  // const { id } = useParams();
+  // const currentFolder = folders.find((f) => f.id === id);
 
   return (
     <div className="border border-gray-400 rounded p-4">
@@ -46,12 +50,14 @@ function PhotoCard({ photos }: PhotoCardProps) {
           Loading photos...
         </div>
       )}
-      <button
-        onClick={loadMore}
-        className="flex border text-black mt-4 mx-auto block"
-      >
-        Load More
-      </button>
+      {!hideLoadMore && (
+        <button
+          onClick={loadMore}
+          className="flex border text-black mt-4 mx-auto block"
+        >
+          Load More
+        </button>
+      )}
     </div>
   );
 }

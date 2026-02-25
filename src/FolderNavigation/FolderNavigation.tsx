@@ -7,7 +7,7 @@ import PictureDesc from "../Main-Content/PictureDesc";
 import FolderModal from "../Folder/folderModal";
 
 function FolderNavigation() {
-  const { hanldeNavigateToFolders, folders } = useContext(PhotoContext);
+  const { folders } = useContext(PhotoContext);
   const { id } = useParams();
 
   const folder = folders.find((f) => f.id === id);
@@ -17,15 +17,11 @@ function FolderNavigation() {
 
   return (
     <div>
-      <PhotoCard photos={folder.photos} />
+      <PhotoCard photos={folder.photos} hideLoadMore />
       <ModalPhoto>
         <PictureDesc />
         <FolderModal />
       </ModalPhoto>
-      <h1>
-        This is the navigation
-        <button onClick={hanldeNavigateToFolders}> here's a button</button>
-      </h1>
     </div>
   );
 }
