@@ -1,29 +1,49 @@
-import { useContext, useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import { PhotoContext } from "../PhotoContext/PhotoProvider";
 
 function UploadForm() {
   const { addPhoto } = useContext(PhotoContext);
-  const [url, setUrl] = useState("");
   const [desc, setDesc] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (
+    e: React.FormEvent<HTMLFormElement> | ChangeEvent<HTMLInputElement>,
+  ) => {
     e.preventDefault();
-
-    const newPhoto = {
-      id: `local-${Date.now()}`,
-      urls: {
-        small: url,
-        regular: url,
-        full: url,
-        raw: url,
-      },
-      alt_description: desc,
-      user: { name: "Cedric" },
-    };
-    addPhoto(newPhoto);
-    setUrl("");
-    setDesc("");
+    if (file) {
+      const newPhoto = {
+        id: Date.now().toString(),
+        urls: {
+          regular: imageUrl || "",
+          small: imageUrl || "",
+          full: imageUrl || "",
+          raw: imageUrl || "",
+        },
+        alt_description: desc,
+        user: {
+          name: "You",
+        },
+      };
+      addPhoto(newPhoto);
+      setDesc("");
+      setFile(null);
+      setImageUrl(null);
+    }
   };
+
+  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //     const selectedFile = e.target.files ? e.target.files[0] : null;
+  //     setFile(selectedFile);
+  //     if (selectedFile) {
+  //         const reader = new FileReader();
+  //         reader.onloadend = () => {
+  //             setImageUrl(reader.result as string);
+  //         };
+  //         reader.readAsDataURL(selectedFile);
+  //     }
+  // };
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -31,10 +51,11 @@ function UploadForm() {
     >
       <h2 className="text-xl font-bold">Upload new photo</h2>
       <input
-        type="url"
+        id="file-input"
+        type="file"
         placeholder="Past Image here"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
+        accept="image/*"
+        onChange={(e) => handleSubmit(e)}
         required
         className="border p-2 rounded"
       />

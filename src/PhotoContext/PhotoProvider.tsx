@@ -19,6 +19,7 @@ export interface Photo {
 }
 interface PhotoContextType {
   photos: Photo[];
+  photoUploaded: Photo[];
   addPhoto: (photo: Photo) => void;
   removePhoto: (id: string) => void;
   searchPhotos: (query: string) => Promise<void>;
@@ -73,6 +74,9 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [isSavePanelOpen, setIsSavePanelOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  //For uploading photos
+  const [photoUploaded, setPhotoUploaded] = useState<Photo[]>([]);
 
   //to open Form modal
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -223,7 +227,7 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const addPhoto = (photo: Photo) => {
-    setPhotos((prevPhotos) => [...prevPhotos, photo]);
+    setPhotoUploaded((prevPhotos) => [...prevPhotos, photo]);
   };
 
   const removePhoto = (id: string) => {
@@ -322,6 +326,7 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
         onCloseForm,
         onOpenForm,
         errorMessage,
+        photoUploaded,
       }}
     >
       {children}

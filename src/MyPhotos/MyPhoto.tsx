@@ -8,7 +8,7 @@ import FormModal from "./FormModal";
 import UploadForm from "./UploadForm";
 
 function MyPhoto() {
-  const { onOpenForm } = useContext(PhotoContext);
+  const { onOpenForm, photoUploaded } = useContext(PhotoContext);
   return (
     <div>
       <h1>I'm going to upload photos and show them here</h1>
@@ -17,7 +17,7 @@ function MyPhoto() {
         <UploadForm />
       </FormModal>
       <div>
-        <PhotoCard photos={[]} hideLoadMore />
+        <PhotoCard photos={photoUploaded} hideLoadMore />
         <ModalPhoto>
           <PictureDesc />
           <FolderModal />
