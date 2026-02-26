@@ -2,47 +2,44 @@ import { ChangeEvent, useContext, useState } from "react";
 import { PhotoContext } from "../PhotoContext/PhotoProvider";
 
 function UploadForm() {
-  const { addPhoto } = useContext(PhotoContext);
+  const { addPhoto, onCloseForm } = useContext(PhotoContext);
   const [desc, setDesc] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [, setFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  const handleSubmit = (
-    e: React.FormEvent<HTMLFormElement> | ChangeEvent<HTMLInputElement>,
-  ) => {
-    e.preventDefault();
-    if (file) {
-      const newPhoto = {
-        id: Date.now().toString(),
-        urls: {
-          regular: imageUrl || "",
-          small: imageUrl || "",
-          full: imageUrl || "",
-          raw: imageUrl || "",
-        },
-        alt_description: desc,
-        user: {
-          name: "You",
-        },
-      };
-      addPhoto(newPhoto);
-      setDesc("");
-      setFile(null);
-      setImageUrl(null);
+  const handleFilechange = (e: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files ? e.target.files[0] : null;
+
+    if (!imageUrl) return;
+    if (selectedFile) {
+      setFile(selectedFile);
+      setImageUrl(URL.createObjectURL(selectedFile));
     }
   };
 
-  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //     const selectedFile = e.target.files ? e.target.files[0] : null;
-  //     setFile(selectedFile);
-  //     if (selectedFile) {
-  //         const reader = new FileReader();
-  //         reader.onloadend = () => {
-  //             setImageUrl(reader.result as string);
-  //         };
-  //         reader.readAsDataURL(selectedFile);
-  //     }
-  // };
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleFilechange(e as unknown as ChangeEvent<HTMLInputElement>);
+
+    const newPhoto = {
+      id: `local-${Date.now()}`,
+      urls: {
+        regular: imageUrl || "",
+        small: imageUrl || "",
+        full: imageUrl || "",
+        raw: imageUrl || "",
+      },
+      alt_description: desc,
+      user: {
+        name: "Cedric",
+      },
+    };
+    addPhoto(newPhoto);
+    setDesc("");
+    setFile(null);
+    setImageUrl(null);
+    onCloseForm();
+  };
 
   return (
     <form
@@ -55,7 +52,7 @@ function UploadForm() {
         type="file"
         placeholder="Past Image here"
         accept="image/*"
-        onChange={(e) => handleSubmit(e)}
+        onChange={handleFilechange}
         required
         className="border p-2 rounded"
       />

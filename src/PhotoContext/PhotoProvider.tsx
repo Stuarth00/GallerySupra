@@ -61,12 +61,15 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const USE_MOCK_DATA = false;
+  //For uploading photos
+  const [photoUploaded, setPhotoUploaded] = useState<Photo[]>([]);
   //For pagination
   const [page, setPage] = useState<number>(1);
   const [currentQuery, setCurrentQuery] = useState<string | null>(null);
   const searchParams = new URLSearchParams(location.search);
   const photoIdFromUrl = searchParams.get("photoId");
-  const selectedPhoto = photos.find((p) => p.id === photoIdFromUrl) || null;
+  const selectedPhoto =
+    [...photos, ...photoUploaded].find((p) => p.id === photoIdFromUrl) || null;
   const isOpen = !!selectedPhoto;
 
   //Saving photos by folders
@@ -74,9 +77,6 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [isSavePanelOpen, setIsSavePanelOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  //For uploading photos
-  const [photoUploaded, setPhotoUploaded] = useState<Photo[]>([]);
 
   //to open Form modal
   const [isFormOpen, setIsFormOpen] = useState(false);

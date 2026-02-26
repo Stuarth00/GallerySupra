@@ -14,7 +14,7 @@ function App() {
     <PhotoProvider>
       <div className="min-h-screen grid grid-rows-[auto_1fr_auto]">
         <Header />
-        <main className="min-h-screen flex flex-col gap-4 p-4">
+        <main className="min-h-screen flex flex-col gap-4 p-4 mt-16">
           <Layout>
             <Routes>
               <Route path="/" element={<Gallery />} />
