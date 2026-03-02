@@ -5,9 +5,9 @@ function FolderPage() {
   const { folders, handleNavigateToFolderId } = useContext(PhotoContext);
 
   return (
-    <div className="min-h-screen flex flex-col gap-4 p-4 overflow-hidden">
+    <div className="min-h-screen flex flex-col gap-4 p-4 overflow-hidden text-[#0E2931] dark:text-[#e2e2e0]">
       <h1 className="text-2xl font-bold">Folders</h1>
-      <p>This is the folders page. Here you can manage your photo folders.</p>
+      <p>Boost your creativity!</p>
       {folders.length === 0 ? (
         <div className="border border-gray-400 rounded p-4 text-center text-gray-500">
           No folders created yet. Start by creating a new folder!

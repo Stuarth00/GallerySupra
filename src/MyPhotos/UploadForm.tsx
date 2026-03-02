@@ -10,7 +10,7 @@ function UploadForm() {
   const handleFilechange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
 
-    if (!imageUrl) return;
+    if (imageUrl) return;
     if (selectedFile) {
       setFile(selectedFile);
       setImageUrl(URL.createObjectURL(selectedFile));
@@ -19,6 +19,7 @@ function UploadForm() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     handleFilechange(e as unknown as ChangeEvent<HTMLInputElement>);
 
     const newPhoto = {
@@ -41,6 +42,8 @@ function UploadForm() {
     onCloseForm();
   };
 
+  const acceptedFormats = "image/*, .HEIC, .HEIF";
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -50,9 +53,9 @@ function UploadForm() {
       <input
         id="file-input"
         type="file"
-        placeholder="Past Image here"
-        accept="image/*"
         onChange={handleFilechange}
+        placeholder="Past Image here"
+        accept={acceptedFormats}
         required
         className="border p-2 rounded"
       />

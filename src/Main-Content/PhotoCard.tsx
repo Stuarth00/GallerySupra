@@ -24,7 +24,7 @@ function PhotoCard({ photos, hideLoadMore }: PhotoCardProps) {
   // const currentFolder = folders.find((f) => f.id === id);
 
   return (
-    <div className="border border-gray-400 rounded p-4">
+    <div className="border border-gray-400 rounded p-4 text-[#0E2931] dark:text-[#e2e2e0]">
       <div className="flex gap-4 items-start">
         {columns.map((col, colIndex) => (
           <div key={colIndex} className="flex flex-col gap-4 flex-1">
@@ -51,10 +51,7 @@ function PhotoCard({ photos, hideLoadMore }: PhotoCardProps) {
         </div>
       )}
       {!hideLoadMore && (
-        <button
-          onClick={loadMore}
-          className="flex border text-black mt-4 mx-auto block"
-        >
+        <button onClick={loadMore} className="flex border mt-4 mx-auto block">
           Load More
         </button>
       )}

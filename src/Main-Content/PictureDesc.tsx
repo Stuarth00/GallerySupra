@@ -19,7 +19,7 @@ function PictureDesc() {
   );
 
   return (
-    <div className="border border-gray-700 rounded-xl p-4 pb-8 flex flex-col items-center gap-4">
+    <div className="border border-gray-700 rounded-xl p-4 pb-8 flex flex-col items-center gap-4 bg-[#E2E2E0] dark:bg-slate-800 text-[#0E2931] dark:text-[#e2e2e0]">
       <img
         className="w-auto max-h-[80vh] object-contain rounded-xl"
         src={selectedPhoto?.urls.regular}

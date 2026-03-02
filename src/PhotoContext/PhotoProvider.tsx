@@ -126,7 +126,7 @@ export const PhotoProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const saveToFolder = (folderId: string, photoId: string) => {
-    const photo = photos.find((p) => p.id === photoId);
+    const photo = [...photos, ...photoUploaded].find((p) => p.id === photoId);
     setFolders((prev) =>
       prev.map((folder) =>
         folder.id === folderId

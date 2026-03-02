@@ -10,8 +10,7 @@ import UploadForm from "./UploadForm";
 function MyPhoto() {
   const { onOpenForm, photoUploaded } = useContext(PhotoContext);
   return (
-    <div>
-      <h1>I'm going to upload photos and show them here</h1>
+    <div className="text-[#0E2931] dark:text-[#e2e2e0]">
       <button onClick={onOpenForm}>Upload your photo</button>
       <FormModal>
         <UploadForm />
