@@ -12,7 +12,7 @@ import MyPhoto from "./MyPhotos/MyPhoto";
 function App() {
   return (
     <PhotoProvider>
-      <div className="min-h-screen grid grid-rows-[auto_1fr_auto]  bg-[#E2E2E0] dark:bg-[#0A171D]">
+      <div className="min-h-screen grid grid-rows-[auto_1fr_auto] font-sains bg-[#E2E2E0] dark:bg-[#0A171D]">
         <Header />
         <main className="min-h-screen flex flex-col gap-4 p-4 mt-24">
           <Layout>
